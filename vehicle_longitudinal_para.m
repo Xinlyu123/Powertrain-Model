@@ -276,8 +276,3 @@ testTime = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 engine_cmd = [0.1, 0.2, 0.3, 0.4, 0.5, 0.4, 0.4, 0.5, 0.4, 0.3];
 generator_cmd = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] * 5;
 motor_cmd = 1000 + 20 * [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-k =Nr/Ns;
-W2T = [Is+Ig 0 0 -Ns*N;
-    0 -Ic+Ie 0 (Ns+Nr)*N;
-    0 0 Vehicle_mass*R_tire^2/FR+Im*FR+Ir*FR -FR*Nr*N;
-    Ns -(Ns+Nr) Nr 0];
