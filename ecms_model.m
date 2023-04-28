@@ -8,6 +8,9 @@ DATE: 21 April 2023
 % clear
 
 %% Constants
+%Gear ratio
+GR = 4.56;
+
 %State of charge
 SOC_L = 0.2; %min
 SOC_H = 1.0; %max
@@ -15,13 +18,13 @@ SOC_range = 0:.1:1; %iterations
 
 %Powers
 Pmax = 200e3; %assume Pmax = 30 kW
-P_demand = linspace(0,Pmax,10);
+P_demand = linspace(200,Pmax,10);
 P_eng_range = 0:.1:1;
 P_motor_range = 0:.1:1;
 
 %Speeds
 Vmax = 2000; %rpm
-V_range = linspace(0,Vmax,10)*2*pi/60; %rad/s
+V_range = linspace(200,Vmax,10)*2*pi/60; %rad/s
 % V_range = 0:.1:1; %rad/s
 
 %Optimal Powers
@@ -56,7 +59,7 @@ for k = 1:length(SOC_range)
         for i = 1:length(P_demand)
             Power = P_demand(i); %current power demanded
             P_eng = P_eng_range*Power;
-            P_motor = Pmax-P_eng;
+            P_motor = Power-P_eng;
 
             mdot_eng = interp2(eng_consum_spd,eng_consum_trq,eng_consum_fuel',Spd,P_eng/Spd)'; %engine fuel consum
             
@@ -81,3 +84,37 @@ for k = 1:length(SOC_range)
 
 end
 
+%% Plotting
+close all;
+f1 = figure;
+subplot(2,2,1)
+contourf(P_demand,V_range,P_eng_opt(:,:,2)')
+title('Engine Power (SOC 0.1)')
+formatfig
+
+subplot(2,2,2)
+contourf(P_demand,V_range,P_motor_opt(:,:,2)')
+title('Motor Power (SOC 0.1)')
+formatfig
+
+subplot(2,2,3)
+contourf(P_demand,V_range,P_eng_opt(:,:,end)')
+title('Engine Power (SOC 1)')
+formatfig
+
+subplot(2,2,4)
+contourf(P_demand,V_range,P_motor_opt(:,:,end)')
+title('Motor Power (SOC 1)')
+formatfig
+
+h = axes(f1,'visible','off');
+f1.Position = [160,64,840,733];
+h.Title.Visible = 'off';
+h.XLabel.Visible = 'on';
+h.YLabel.Visible = 'on';
+ylabel(h,'Shaft Speed (rad/s)','FontWeight','bold');
+xlabel(h,'Power Demand (W)','FontWeight','bold');
+title(h,'title');
+c = colorbar(h,'Position',[0.93 0.168 0.022 0.7]);  % attach colorbar to h
+colormap
+caxis(h,[0,Pmax]);             % set colorbar limits
